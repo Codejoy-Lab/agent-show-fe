@@ -3,7 +3,7 @@ import styles from './index.module.scss';
 import Header from './Components/Header';
 import Banner from './Components/Banner';
 import Content from './Components/Content';
-import AmaiteWrap from '../../Components/AmaiteWrap';
+import AmaiteWrap from '@/Components/AmaiteWrap';
 
 export const PageSwitchContext = createContext<{
   page: string;

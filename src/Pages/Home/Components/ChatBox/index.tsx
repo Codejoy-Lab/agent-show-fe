@@ -2,9 +2,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './index.module.scss';
 
-const ChatBox = (props: { messages: any[] }) => {
+const ChatBox = (props: {
+  messages: any[];
+  messageProcessFinsh: () => void;
+}) => {
   const boxRef = useRef<HTMLDivElement>(null);
-  const { messages } = props;
+  const { messages, messageProcessFinsh } = props;
   return (
     <div ref={boxRef} className={styles['chat-box']}>
       {messages.map((message, index) => (
@@ -15,6 +18,7 @@ const ChatBox = (props: { messages: any[] }) => {
           }`}
         >
           <MessageBox
+            messageProcessFinsh={messageProcessFinsh}
             parent={boxRef.current}
             message={message.text}
             user={message.user}
@@ -32,8 +36,9 @@ const MessageBox = (props: {
   message: string;
   user: string;
   parent: HTMLDivElement | null;
+  messageProcessFinsh: () => void;
 }) => {
-  const { message = '', user = '', parent } = props;
+  const { message = '', user = '', parent, messageProcessFinsh } = props;
   const timeIdRef = useRef(1);
   const [showMessgae, setShowMessage] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -51,6 +56,8 @@ const MessageBox = (props: {
         setCurrentIndex((old) => old + 1);
       }, delay);
       return;
+    } else {
+      messageProcessFinsh();
     }
     if (parent) {
       parent.scrollTop = parent.scrollHeight;

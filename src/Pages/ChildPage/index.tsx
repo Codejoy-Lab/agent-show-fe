@@ -1,8 +1,8 @@
-import React, { useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { Button, Drawer, Modal, Upload } from 'antd';
 import styles from './index.module.scss';
-import Card from '../Home/Components/Card';
-import ChatBox from '../Home/Components/ChatBox';
+import Card from '@/Pages/Home/Components/Card';
+import ChatBox from '@/Pages/Home/Components/ChatBox';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { UploadOutlined } from '@ant-design/icons';
 import {
@@ -10,12 +10,9 @@ import {
   stopTapeApi,
   getQuestion,
   callLlm,
-  // getAnswer,
   sendPlayOlder,
-} from '../../request/api';
-import { devUseWarning } from 'antd/es/_util/warning';
-// import { startRecording, stopRecording, processRecordedData } from './utils';
-// import { AxiosResponse } from 'axios';
+} from '@/request/api';
+
 export default () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -23,6 +20,9 @@ export default () => {
   const [open, setOpen] = useState(true);
   const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
   const [openUploadModal, setOpenUploadModal] = useState(false);
+  const [roleStatus, setRoleatus] = useState(1);
+  console.log('roleStatus',roleStatus);
+  
   useLayoutEffect(() => {
     function updateSize() {
       setScreenSize({
@@ -39,19 +39,27 @@ export default () => {
   }, []);
 
   const [messages, setMessages] = useState<{ text: string; user: string }[]>([
-    { text: '你好, 有什么问题都可以咨询我', user: 'them' },
+    { text: '你好, 有什么法律问题都可以咨询我哦', user: 'them' },
   ]);
 
   const handleBack = () => {
     setOpen(false);
   };
+  const handlestartTape = () => {
+    setRoleatus(3);
+    return;
+    startTapeApi();
+  };
   const handleStop = () => {
+    setRoleatus(2);
+    return;
     stopTapeApi().then(async () => {
       const question = await getQuestion();
       setMessages((old) => [...old, { text: question, user: 'you' }]);
       const answer = await callLlm('lawyer', question);
       console.log('answer', answer.data);
       sendPlayOlder('lawyer', answer.data);
+      setRoleatus(2);
       setMessages((old) => [...old, { text: answer.data, user: 'them' }]);
     });
   };
@@ -63,7 +71,10 @@ export default () => {
     // const answer = await callLlm('lawyer', '');
     // sendPlayOlder('lawyer', answer.data);
   };
-
+  const [isRestRecord, setIsRestRecord] = useState(false);
+  const handleMessageProcessFinsh = async () => {
+    setIsRestRecord(true);
+  };
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <Drawer
@@ -85,7 +96,10 @@ export default () => {
         <div className={styles.contentContainer}>
           <div className={styles.left}>
             <div className={styles.message}>
-              <ChatBox messages={messages} />
+              <ChatBox
+                messageProcessFinsh={handleMessageProcessFinsh}
+                messages={messages}
+              />
             </div>
             <div className={styles.footer}>
               <BigButton type="primary" onClick={handleBack}>
@@ -95,16 +109,19 @@ export default () => {
                 文本分析
               </BigButton>{' '}
               <RecordButton
+                isReset={isRestRecord}
                 type="primary"
                 handleStop={handleStop}
-                onClick={startTapeApi}
-              >
-                提问
-              </RecordButton>{' '}
+                handlestartTape={handlestartTape}
+              />
             </div>
           </div>
           <div className={styles.right}>
-            <Card {...params} style={{ height: '80%', width: '100%' }} />
+            <Card
+              {...params}
+              videoUrl={params.videoUrls[roleStatus]}
+              style={{ height: '80%', width: '100%' }}
+            />
           </div>
         </div>
       </Drawer>
@@ -145,7 +162,7 @@ const BigButton = (props: any) => {
   );
 };
 const RecordButton = (props: any) => {
-  const { handleStop } = props;
+  const { handleStop, isReset = false, handlestartTape } = props;
 
   const list = [
     {
@@ -153,6 +170,7 @@ const RecordButton = (props: any) => {
       setup: 0,
       handle: async () => {
         if (status.setup == 0) {
+          handlestartTape();
           setStatus(list[1]);
         }
       },
@@ -174,6 +192,13 @@ const RecordButton = (props: any) => {
     },
   ];
   const [status, setStatus] = useState(list[0]);
+
+  useEffect(() => {
+    if (isReset) {
+      setStatus(list[0]);
+    }
+  }, [isReset]);
+
   return (
     <BigButton
       {...props}

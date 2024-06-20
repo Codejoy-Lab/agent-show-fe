@@ -2,17 +2,16 @@ import React from 'react';
 import styles from './index.module.scss';
 interface CardProps {
   onClick: (...args: any) => void;
-  videoUrls: string[];
+  videoUrl: string;
   type: string;
   style?: any
 }
 export default (props: CardProps) => {
-  const { onClick, videoUrls, style } = props;
-
+  const { onClick, videoUrl, style } = props;
   return (
     <div className={styles.container} onClick={onClick} style={style || {}}>
-      <video loop autoPlay className={styles.video}>
-        <source src={videoUrls[0]}></source>
+      <video key={videoUrl} loop autoPlay className={styles.video}>
+        <source src={videoUrl}></source>
       </video>
     </div>
   );

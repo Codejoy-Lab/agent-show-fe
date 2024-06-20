@@ -1,14 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import styles from './index.module.scss';
 import Card from '../Card';
-import ChildPage from '../../../ChildPage';
 import CardList from './data';
-import { PageSwitchContext } from '../../index';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default () => {
   const navigate = useNavigate();
-  // const list = CardList
   const [currentData, setCurrentData] = useState({});
   const [openChildPage, setOpenChildPage] = useState(false);
   const handleClickCard = (data: React.SetStateAction<{}>) => {
@@ -21,8 +18,16 @@ export default () => {
     <div className={styles.container}>
       {CardList.map((item, i) => {
         return (
-          <div key={i} style={{ width: `${90 / CardList.length}%`, cursor:'pointer' }}>
-            <Card {...item} key={i} onClick={() => handleClickCard(item)} />
+          <div
+            key={i}
+            style={{ width: `${90 / CardList.length}%`, cursor: 'pointer' }}
+          >
+            <Card
+              {...item}
+              videoUrl={item.videoUrls[0]}
+              key={item.videoUrls[0]}
+              onClick={() => handleClickCard(item)}
+            />
           </div>
         );
       })}

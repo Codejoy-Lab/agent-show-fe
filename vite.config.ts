@@ -10,5 +10,10 @@ export default defineConfig({
   base: "./",
   build:{
     outDir: "aidisplayapp"
+  },
+  resolve:{
+    alias: [
+      { find:"@/", replacement: "/src/"}
+    ]
   }
 })
