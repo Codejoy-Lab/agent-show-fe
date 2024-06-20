@@ -9,7 +9,6 @@ export default () => {
   const [currentData, setCurrentData] = useState({});
   const [openChildPage, setOpenChildPage] = useState(false);
   const handleClickCard = (data: React.SetStateAction<{}>) => {
-    //  setPage('ChildPage');
     navigate('/chat', { state: { params: data } });
     setCurrentData(data);
     setOpenChildPage(true);
