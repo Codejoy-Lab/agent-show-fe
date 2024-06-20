@@ -1,0 +1,15 @@
+@font-face {
+  font-family: 'CustomBannerTitleFont'; /* 自定义字体名称 */
+  src: url('/fonts/itZLxJoDFx4Y.woff') format('woff'); /* 第一选择的字体格式 */
+
+  font-weight: normal; /* 可选：定义字体的粗细，默认normal */
+  font-style: normal; /* 可选：定义字体的风格，默认normal */
+}
+
+* {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  overflow: -moz-scrollbars-none; /* Firefox */
+  padding: 0;
+  margin: 0;
+}

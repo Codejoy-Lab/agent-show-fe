@@ -1,0 +1,28 @@
+.container {
+  height: 30vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+  // background-image: url('/images/logo-codejoy.png');
+  .title {
+    font-family: 'CustomBannerTitleFont', Arial, sans-serif;
+    user-select: none;
+    padding: 0 20px;
+    font-size: 5vw;
+    font-style: italic;
+    color: #fff;
+    background-image: linear-gradient(
+      to right,
+      #87cefa,
+      rgb(115, 115, 211),
+      rgb(224, 25, 224)
+    ); /* 定义渐变色 */
+    -webkit-background-clip: text; /* 对 WebKit 内核的浏览器（如 Chrome、Safari） */
+    -webkit-text-fill-color: transparent; /* 使文本颜色透明，让背景色透出来 */
+    background-clip: text; /* 对其他支持该属性的浏览器 */
+    color: transparent; /* 确保在不支持 -webkit-background-clip:text 的浏览器中文字可读 */
+  }
+}
