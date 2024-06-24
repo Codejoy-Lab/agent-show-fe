@@ -10,9 +10,9 @@ import {
   stopTapeApi,
   getQuestion,
   callLlm,
-  sendPlayOlder,
+  //   sendPlayOlder,
 } from '@/request/api';
-
+import { startEventStream } from '@/request/sse';
 export default () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -21,8 +21,9 @@ export default () => {
   const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
   const [openUploadModal, setOpenUploadModal] = useState(false);
   const [roleStatus, setRoleatus] = useState(1);
-  console.log('roleStatus',roleStatus);
-  
+  const [chatId, setChatId] = useState(0);
+  console.log('roleStatus', roleStatus);
+  // const [ videoUrl, setVideoUrl ]= useState(params.videoUrls[0]);
   useLayoutEffect(() => {
     function updateSize() {
       setScreenSize({
@@ -47,18 +48,28 @@ export default () => {
   };
   const handlestartTape = () => {
     setRoleatus(3);
-    return;
     startTapeApi();
   };
+  const acceptCallback = (data: string) => {
+    console.log('关闭', data);
+    //切换角色动作
+    setRoleatus(1);
+    setChatId(Math.floor(Math.random() * 100));
+  };
+  const sseClose = () => {
+    console.log('sse 关闭');
+    setRoleatus(1);
+    setChatId(Math.floor(Math.random() * 100));
+  };
+
   const handleStop = () => {
     setRoleatus(2);
-    return;
     stopTapeApi().then(async () => {
       const question = await getQuestion();
       setMessages((old) => [...old, { text: question, user: 'you' }]);
-      const answer = await callLlm('lawyer', question);
+      const answer = await callLlm(params.role, question);
       console.log('answer', answer.data);
-      sendPlayOlder('lawyer', answer.data);
+      startEventStream(params.role, answer.data, acceptCallback, sseClose);
       setRoleatus(2);
       setMessages((old) => [...old, { text: answer.data, user: 'them' }]);
     });
@@ -71,9 +82,9 @@ export default () => {
     // const answer = await callLlm('lawyer', '');
     // sendPlayOlder('lawyer', answer.data);
   };
-  const [isRestRecord, setIsRestRecord] = useState(false);
+  // const [isRestRecord, setIsRestRecord] = useState(false);
   const handleMessageProcessFinsh = async () => {
-    setIsRestRecord(true);
+    // setIsRestRecord(true);
   };
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
@@ -109,7 +120,8 @@ export default () => {
                 文本分析
               </BigButton>{' '}
               <RecordButton
-                isReset={isRestRecord}
+                chatId={chatId}
+                // isReset={isRestRecord}
                 type="primary"
                 handleStop={handleStop}
                 handlestartTape={handlestartTape}
@@ -119,6 +131,7 @@ export default () => {
           <div className={styles.right}>
             <Card
               {...params}
+              key={params.videoUrls[roleStatus]}
               videoUrl={params.videoUrls[roleStatus]}
               style={{ height: '80%', width: '100%' }}
             />
@@ -162,13 +175,13 @@ const BigButton = (props: any) => {
   );
 };
 const RecordButton = (props: any) => {
-  const { handleStop, isReset = false, handlestartTape } = props;
+  const { handleStop, handlestartTape, chatId } = props;
 
   const list = [
     {
       title: '点击语音提问',
       setup: 0,
-      handle: async () => {
+      handle: async (status: { setup: number }) => {
         if (status.setup == 0) {
           handlestartTape();
           setStatus(list[1]);
@@ -179,6 +192,8 @@ const RecordButton = (props: any) => {
       title: '发送你的问题',
       setup: 1,
       handle: async (status: { setup: number }) => {
+        console.log(status);
+        
         if (status.setup == 1) {
           handleStop();
           setStatus(list[2]);
@@ -194,11 +209,13 @@ const RecordButton = (props: any) => {
   const [status, setStatus] = useState(list[0]);
 
   useEffect(() => {
-    if (isReset) {
-      setStatus(list[0]);
-    }
-  }, [isReset]);
+    setStatus(list[0]);
+  }, [chatId]);
+  useEffect(()=>{
 
+    console.log('提问',status);
+    
+  }, [status])
   return (
     <BigButton
       {...props}

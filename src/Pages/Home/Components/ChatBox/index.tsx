@@ -54,14 +54,17 @@ const MessageBox = (props: {
       timeIdRef.current = setTimeout(() => {
         setShowMessage(message.substring(0, currentIndex + 1));
         setCurrentIndex((old) => old + 1);
+        if (parent) {
+          console.log(parent.scrollHeight);
+
+          parent.scrollTop = parent.scrollHeight;
+        }
       }, delay);
       return;
     } else {
       messageProcessFinsh();
     }
-    if (parent) {
-      parent.scrollTop = parent.scrollHeight;
-    }
+
     return () => {
       clearInterval(timeIdRef.current);
     };

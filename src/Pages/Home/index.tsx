@@ -14,13 +14,13 @@ export const PageSwitchContext = createContext<{
 });
 const Home = () => {
   return (
-    <AmaiteWrap show={true} classNames={styles.fade}>
+    // <AmaiteWrap show={true} classNames={styles.fade}>
       <div className={styles.container}>
         <Header />
         <Banner />
         <Content />
       </div>
-    </AmaiteWrap>
+    // </AmaiteWrap>
   );
 };
 export default Home;

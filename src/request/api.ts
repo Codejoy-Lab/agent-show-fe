@@ -1,4 +1,3 @@
-import { AxiosResponse } from 'axios';
 import req from '.';
 
 //语音识别
@@ -24,6 +23,6 @@ export const getQuestion = async (): Promise<string> => {
 //   return await req.get('/start_llm_question');
 // };
 // 发送播放指令
-export const sendPlayOlder = async (role: string, question: string) => {
-  return await req.post(`/start_llm_paly/${role}/${question}`);
-};
+// export const sendPlayOlder = async (role: string, question: string) => {
+// //   return await req.post(`/start_llm_paly/${role}/${question}`);
+// };

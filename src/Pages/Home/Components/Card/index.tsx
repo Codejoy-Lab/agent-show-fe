@@ -3,7 +3,7 @@ import styles from './index.module.scss';
 interface CardProps {
   onClick: (...args: any) => void;
   videoUrl: string;
-  type: string;
+  role: string;
   style?: any
 }
 export default (props: CardProps) => {

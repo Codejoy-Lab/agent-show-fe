@@ -11,31 +11,3 @@
 .exitAniamte {
 
 }
-
-@keyframes slideOutLeft {
-  to {
-    transform: translateX(100%); /* 元素滑动到屏幕外的距离，可以根据需要调整 */
-    opacity: 0; /* 可选，让元素在滑动结束时消失 */
-  }
-}
-
-/* 进入动画未修改，保持原样 */
-.fade-enter {
-  opacity: 0;
-}
-
-.fade-enter-active {
-  opacity: 1;
-  transition: all 300ms; /* 修改为all以包含transform */
-}
-
-/* 更新退出动画类 */
-.fade-exit {
-  opacity: 1;
-}
-
-.fade-exit-active {
-  opacity: 0;
-  animation: slideOutLeft 300ms forwards; /* 应用滑动动画 */
-  transition: opacity 300ms; /* 保持透明度过渡 */
-}

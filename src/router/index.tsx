@@ -9,6 +9,7 @@ const router = createBrowserRouter([
   {
     path:'/chat',
     element: <ChildPage />
-  }
+  },
+
 ]);
 export default router;
