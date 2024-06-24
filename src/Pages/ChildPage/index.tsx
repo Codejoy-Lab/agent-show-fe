@@ -49,11 +49,10 @@ export default () => {
     setOpen(false);
   };
   const handlestartTape = async () => {
-    let chunks: any[] = [];
-    await startRecording(chunks);
-    console.log('chunks', chunks);
+    // let chunks: any[] = [];
+    // await startRecording(chunks);
+    // console.log('chunks', chunks);
 
-    return;
     setRoleatus(3);
 
     startTapeApi();
