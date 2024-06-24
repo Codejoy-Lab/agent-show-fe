@@ -12,6 +12,8 @@ import {
   callLlm,
   //   sendPlayOlder,
 } from '@/request/api';
+import { startRecording, stopRecording, initMediaRecorder } from './utils';
+
 import { startEventStream } from '@/request/sse';
 export default () => {
   const location = useLocation();
@@ -46,8 +48,14 @@ export default () => {
   const handleBack = () => {
     setOpen(false);
   };
-  const handlestartTape = () => {
+  const handlestartTape = async () => {
+    let chunks: any[] = [];
+    await startRecording(chunks);
+    console.log('chunks', chunks);
+
+    return;
     setRoleatus(3);
+
     startTapeApi();
   };
   const acceptCallback = (data: string) => {
@@ -193,7 +201,7 @@ const RecordButton = (props: any) => {
       setup: 1,
       handle: async (status: { setup: number }) => {
         console.log(status);
-        
+
         if (status.setup == 1) {
           handleStop();
           setStatus(list[2]);
@@ -211,11 +219,9 @@ const RecordButton = (props: any) => {
   useEffect(() => {
     setStatus(list[0]);
   }, [chatId]);
-  useEffect(()=>{
-
-    console.log('提问',status);
-    
-  }, [status])
+  useEffect(() => {
+    console.log('提问', status);
+  }, [status]);
   return (
     <BigButton
       {...props}

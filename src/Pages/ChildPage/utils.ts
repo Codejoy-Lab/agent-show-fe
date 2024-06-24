@@ -1,8 +1,11 @@
 const check = () => {
+  debugger
   if (typeof MediaRecorder === 'undefined' || !MediaRecorder.isTypeSupported) {
     console.error('浏览器不支持录音功能');
+    debugger
     return false;
   }
+  return true
 };
 
 const getUserMedia = async () => {
@@ -14,7 +17,10 @@ const getUserMedia = async () => {
   }
 };
 
-const initMediaRecorder = async (stream: MediaStream, chunks: Blob[]) => {
+export const initMediaRecorder = async (
+  stream: MediaStream,
+  chunks: Blob[]
+) => {
   let mediaRecorder;
 
   mediaRecorder = new MediaRecorder(stream);
@@ -35,7 +41,9 @@ export async function startRecording(chunks: Blob[]) {
   if (!check()) {
     return;
   }
+  debugger
   const stream = await getUserMedia();
+  debugger
   // let chunks: Blob[] = [];
   let mediaRecorder;
 
