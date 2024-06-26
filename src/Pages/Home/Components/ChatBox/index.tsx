@@ -56,7 +56,6 @@ const MessageBox = (props: {
         setCurrentIndex((old) => old + 1);
         if (parent) {
           console.log(parent.scrollHeight);
-
           parent.scrollTop = parent.scrollHeight;
         }
       }, delay);

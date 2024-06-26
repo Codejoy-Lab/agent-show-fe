@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, Drawer, Modal, Upload } from 'antd';
 import styles from './index.module.scss';
 import Card from '@/Pages/Home/Components/Card';
@@ -44,18 +44,40 @@ export default () => {
   const [messages, setMessages] = useState<{ text: string; user: string }[]>([
     { text: '你好, 有什么法律问题都可以咨询我哦', user: 'them' },
   ]);
-
+  const mediaRecorderRef = useRef<any>(null);
+  const chunksRef = useRef([]);
   const handleBack = () => {
     setOpen(false);
   };
+
+  const onClose = async (event: any, chunks: any[]) => {
+    const blob = new Blob(chunks, {
+      type: 'audio/webm;codecs=opus',
+    });
+    console.log('Blob的大小为:', blob.size, '字节');
+
+    const file = new File([blob], 'myCustomFileName.webm', {
+      type: 'audio/webm;codecs=opus',
+    });
+
+    const formData = new FormData();
+    formData.append('file', file);
+    chunksRef.current = [];
+
+    const res = await startTapeApi(formData);
+    console.log(res);
+  };
   const handlestartTape = async () => {
     // let chunks: any[] = [];
-    // await startRecording(chunks);
-    // console.log('chunks', chunks);
+    const recoder = await startRecording(chunksRef.current, onClose);
+    if (recoder) {
+      mediaRecorderRef.current = recoder;
+    }
+    console.log('chunks', chunksRef.current);
+    return;
+    // setRoleatus(3);
 
-    setRoleatus(3);
-
-    startTapeApi();
+    // startTapeApi();
   };
   const acceptCallback = (data: string) => {
     console.log('关闭', data);
@@ -69,7 +91,26 @@ export default () => {
     setChatId(Math.floor(Math.random() * 100));
   };
 
-  const handleStop = () => {
+  const handleStop = async () => {
+    stopRecording(mediaRecorderRef.current);
+    console.log('停止录音', chunksRef.current);
+    return;
+    const blob = new Blob(chunksRef.current, {
+      type: 'audio/webm;codecs=opus',
+    });
+    console.log('Blob的大小为:', blob.size, '字节');
+
+    const file = new File([blob], 'myCustomFileName.webm', {
+      type: 'audio/webm;codecs=opus',
+    });
+
+    const formData = new FormData();
+    formData.append('file', file);
+    chunksRef.current = [];
+
+    await startTapeApi(formData);
+    return;
+
     setRoleatus(2);
     stopTapeApi().then(async () => {
       const question = await getQuestion();

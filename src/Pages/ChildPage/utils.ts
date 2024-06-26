@@ -1,11 +1,9 @@
 const check = () => {
-  debugger
   if (typeof MediaRecorder === 'undefined' || !MediaRecorder.isTypeSupported) {
     console.error('浏览器不支持录音功能');
-    debugger
     return false;
   }
-  return true
+  return true;
 };
 
 const getUserMedia = async () => {
@@ -19,7 +17,8 @@ const getUserMedia = async () => {
 
 export const initMediaRecorder = async (
   stream: MediaStream,
-  chunks: Blob[]
+  chunks: Blob[],
+  onClose: (...args: any) => void
 ) => {
   let mediaRecorder;
 
@@ -30,34 +29,40 @@ export const initMediaRecorder = async (
       chunks.push(event.data);
     }
   };
-
+  mediaRecorder.onstop = (event) => {
+    onClose(event, chunks);
+  };
   mediaRecorder.onerror = (event) => {
     console.error('录音出错:', event);
   };
   return mediaRecorder;
 };
 
-export async function startRecording(chunks: Blob[]) {
+export async function startRecording(
+  chunks: Blob[],
+  onClose: (...args: any) => void
+) {
   if (!check()) {
     return;
   }
-  debugger
+
   const stream = await getUserMedia();
-  debugger
+
   // let chunks: Blob[] = [];
   let mediaRecorder;
-
   if (stream) {
-    mediaRecorder = await initMediaRecorder(stream, chunks);
+    mediaRecorder = await initMediaRecorder(stream, chunks, onClose);
     mediaRecorder.start();
     console.log('录音开始');
+
+    return mediaRecorder;
   }
 }
-export function stopRecording(mediaRecorder: MediaRecorder, chunks: Blob[]) {
+export function stopRecording(mediaRecorder: MediaRecorder, chunks?: Blob[]) {
   mediaRecorder.stop();
   console.log('录音停止');
-  const blob = new Blob(chunks, { type: 'audio/webm;codecs=opus' });
-  const url = URL.createObjectURL(blob);
+  // const blob = new Blob(chunks, { type: 'audio/webm;codecs=opus' });
+  // const url = URL.createObjectURL(blob);
 }
 export function processRecordedData(chunks: Blob[]) {
   const blob = new Blob(chunks, { type: 'audio/webm;codecs=opus' });

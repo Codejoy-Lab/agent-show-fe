@@ -1,8 +1,8 @@
 import req from '.';
 
 //语音识别
-export const startTapeApi = async () => {
-  return await req.post('/start_asr');
+export const startTapeApi = async (data:any) => {
+  return await req.post('/start_asr', data, {headers: {'Content-Type': 'application/form-data'}});
 };
 // 关闭语音识别
 export const stopTapeApi = async () => {
